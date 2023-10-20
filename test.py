@@ -1,4 +1,5 @@
 import torch
+import torchvision
 
 x = torch.tensor([1, 2])
 y = torch.tensor([3, 4])
