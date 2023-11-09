@@ -133,26 +133,26 @@ def train_model(model, dataset, device='cpu', epochs=1, tqdm_position=0):
     return trained_model
 
 
-def eval_model(model, dataset):
+def eval_model(model, dataset, device):
     server_model = copy.deepcopy(model)
     server_model.eval()
-    server_model.to('cpu')
+    server_model.to(device)
     with torch.no_grad():
         correct = 0
         total = 0
         data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
         for images, labels in data_loader:
-            outputs = server_model(images)
+            outputs = server_model(images.to(device))
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+            correct += (predicted == labels.to(device)).sum().item()
         print('Test Accuracy: {:.2f}%'.format(100 * correct / total))
 
 if torch.cuda.is_available():
     device = 'cuda'
 else:
     device = 'cpu'
-# print(device)
+print(device)
 
 train_dataset = torchvision.datasets.MNIST(
     root='./data',
@@ -198,9 +198,9 @@ for i in tqdm.tqdm(range(communication_round),
         client_param[j] = client[j].state_dict()
     server_model = Server(model=model, client_params=client_param).model
 
-eval_model(client[0], test_dataset)
-eval_model(client[1], test_dataset)
-eval_model(server_model, test_dataset)
+eval_model(client[0], test_dataset, device)
+eval_model(client[1], test_dataset, device)
+eval_model(server_model, test_dataset, device)
 
 # trained_model = copy.deepcopy(model).to(device)
 # # trained_model = LeNet5(input_channels=1).to(device)
