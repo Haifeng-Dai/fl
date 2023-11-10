@@ -54,8 +54,8 @@ class Server:
                 # print(new_params.equal(self.server_params[key]), end=' | ')
                 self.parameters[key] = self.parameters[key].add(
                     new_params)
-                tmp_1 = copy.deepcopy(new_params)
-                tmp_2 = copy.deepcopy(self.parameters[key])
+                # tmp_1 = copy.deepcopy(new_params)
+                # tmp_2 = copy.deepcopy(self.parameters[key])
                 # print(new_params.equal(tmp_2.div(2)))
         for key in self.parameters:
             self.parameters[key] = self.parameters[key].div(2)
